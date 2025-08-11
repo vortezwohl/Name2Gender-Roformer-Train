@@ -9,7 +9,6 @@ from torch.utils.tensorboard import SummaryWriter
 from data_preprocess import preprocess, train_dataset, test_dataset
 from model import Name2GenderSmall
 
-model_name = f'name2gender-small.{int(time.time())}'
 model = Name2GenderSmall(dtype=torch.float32)
 
 # %% data process
@@ -19,6 +18,21 @@ test_set = preprocess(test_dataset, batched=True)
 # %% shuffle dataset
 random.shuffle(train_set)
 random.shuffle(test_set)
+
+
+# %% test
+
+
+@torch.no_grad()
+def acc(_model):
+    model.eval()
+    acc_count = 0.
+    for token_ids, label in test_set:
+        output = model(token_ids).squeeze().item()
+        if int(output) == int(label):
+            acc_count += 1.
+    return acc_count / len(test_set)
+
 
 # %% train
 train_step = 0
@@ -50,6 +64,7 @@ try:
                 print(f'- (Valid) Step [{step}/{len(test_set)}], Loss: {loss.item()}')
                 writer.add_scalar('valid/loss', loss.item(), valid_step)
             model.train()
+        model.save(model_name=f'name2gender-small.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
 except KeyboardInterrupt:
-    model.save(model_name=model_name, model_dir='checkpoint')
-model.save(model_name=model_name, model_dir='checkpoint')
+    model.save(model_name=f'name2gender-small.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
+model.save(model_name=f'name2gender-small.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
