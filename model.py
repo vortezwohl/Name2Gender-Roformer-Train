@@ -32,7 +32,7 @@ class Name2GenderBase(BaseNeuralNetwork):
         for encoder in self.encoders:
             embs = encoder(embs)
         logits = self.lstm(embs, self.lstm.initial_state(embs.shape[0]))[0]
-        return torch.softmax(logits, dim=-1, dtype=self.dtype)
+        return torch.sigmoid(logits)
 
 
 class Name2GenderSmall(BaseNeuralNetwork):
@@ -59,4 +59,4 @@ class Name2GenderSmall(BaseNeuralNetwork):
         for encoder in self.encoders:
             embs = encoder(embs)
         logits = self.lstm(embs, self.lstm.initial_state(embs.shape[0]))[0]
-        return torch.softmax(logits, dim=-1, dtype=self.dtype)
+        return torch.sigmoid(logits)
