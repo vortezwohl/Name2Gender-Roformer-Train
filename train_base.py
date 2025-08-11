@@ -5,11 +5,13 @@ import random
 import torch
 from torch import nn, optim
 from torch.utils.tensorboard import SummaryWriter
+from tqdm import tqdm
 
 from data_preprocess import preprocess, train_dataset, test_dataset
 from model import Name2GenderBase
 
 model = Name2GenderBase(dtype=torch.float32)
+print(model)
 
 # %% data process
 train_set = preprocess(train_dataset, batched=True)
@@ -18,6 +20,8 @@ test_set = preprocess(test_dataset, batched=True)
 # %% shuffle dataset
 random.shuffle(train_set)
 random.shuffle(test_set)
+
+
 # %% test
 
 
@@ -25,11 +29,13 @@ random.shuffle(test_set)
 def acc(_model):
     model.eval()
     acc_count = 0.
-    for token_ids, label in test_set:
+    for token_ids, label in tqdm(test_set):
         output = model(token_ids).squeeze().item()
         if int(output) == int(label):
             acc_count += 1.
-    return acc_count / len(test_set)
+    acc_rate = acc_count / len(test_set)
+    print(f'Acc=>{acc_rate * 100:.2f}%')
+    return acc_rate
 
 
 # %% train
@@ -62,7 +68,7 @@ try:
                 print(f'- (Valid) Step [{step}/{len(test_set)}], Loss: {loss.item()}')
                 writer.add_scalar('valid/loss', loss.item(), valid_step)
             model.train()
-        model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
+        print(model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint'))
 except KeyboardInterrupt:
-    model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
-model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint')
+    print(model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint'))
+print(model.save(model_name=f'name2gender-base.acc={acc(model)}.{int(time.time())}', model_dir='checkpoint'))
