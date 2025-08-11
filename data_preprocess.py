@@ -13,7 +13,7 @@ def encode(text: str, batched: bool = False, device: torch.device = None) -> tor
     return torch.tensor(tokenizer.encode(text), dtype=torch.long, device=device)
 
 
-def preprocess(dataset: dict, dtype: torch.dtype = torch.float32, device: torch.device = torch.device('cpu'), **kwargs) -> tuple:
+def preprocess(dataset: dict, dtype: torch.dtype = torch.float32, device: torch.device = torch.device('cpu'), **kwargs) -> list:
     names, genders = dataset['Name'], dataset['Gender']
     male_names, female_names = [], []
     for i, name in enumerate(names):
@@ -25,7 +25,7 @@ def preprocess(dataset: dict, dtype: torch.dtype = torch.float32, device: torch.
     token_ids = [encode(x, **kwargs) for x in all_texts]
     labels = ([torch.tensor([1.], dtype=dtype, device=device) for _ in range(len(male_names))]
               + [torch.tensor([.0], dtype=dtype, device=device) for _ in range(len(female_names))])
-    return token_ids, labels
+    return list(zip(token_ids, labels))
 
 
 if __name__ == '__main__':
