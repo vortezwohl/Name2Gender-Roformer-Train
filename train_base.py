@@ -14,8 +14,8 @@ model = Name2GenderBase(dtype=torch.float32)
 print(model)
 
 # %% data process
-train_set = preprocess(train_dataset, batched=True)
-test_set = preprocess(test_dataset, batched=True)
+train_set = preprocess(train_dataset, dtype=model.dtype, device=model.device)
+test_set = preprocess(test_dataset, dtype=model.dtype, device=model.device)
 
 # %% shuffle dataset
 random.shuffle(train_set)
