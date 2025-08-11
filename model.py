@@ -4,6 +4,7 @@ from deeplotx.nn import BaseNeuralNetwork
 from deeplotx import RoFormerEncoder, RecursiveSequential
 from transformers import AutoTokenizer
 
+MAX_LEN = 256
 tokenizer = AutoTokenizer.from_pretrained(pretrained_model_name_or_path='FacebookAI/xlm-roberta-base')
 
 
