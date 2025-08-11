@@ -35,7 +35,7 @@ try:
         for step, (token_ids, label) in enumerate(train_set):
             train_step += 1
             output = model(token_ids)
-            loss = loss_function(output, label.unsqueeze(dim=0))
+            loss = loss_function(output, label.unsqueeze(dim=0)) + model.elastic_net(alpha=alpha, rho=rho)
             optimizer.zero_grad()
             loss.backward()
             optimizer.step()
@@ -43,11 +43,13 @@ try:
             writer.add_scalar('train/loss', loss.item(), train_step)
         for step, (token_ids, label) in enumerate(test_set):
             valid_step += 1
+            model.eval()
             with torch.no_grad():
                 output = model(token_ids)
                 loss = loss_function(output, label.unsqueeze(dim=0))
                 print(f'- (Valid) Step [{step}/{len(test_set)}], Loss: {loss.item()}')
                 writer.add_scalar('valid/loss', loss.item(), valid_step)
+            model.train()
 except KeyboardInterrupt:
     model.save(model_name=model_name, model_dir='checkpoint')
 model.save(model_name=model_name, model_dir='checkpoint')

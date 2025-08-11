@@ -8,4 +8,5 @@ dependencies = [
     "datasets>=4.0.0",
     "deeplotx>=0.9.9",
     "tensorboard>=2.20.0",
+    "torch==2.7.0",
 ]
