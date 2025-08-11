@@ -7,10 +7,10 @@ from torch import nn, optim
 from torch.utils.tensorboard import SummaryWriter
 
 from data_preprocess import preprocess, train_dataset, test_dataset
-from model import Name2GenderBase
+from model import Name2GenderSmall
 
-model_name = f'name2gender-base.{int(time.time())}'
-model = Name2GenderBase(dtype=torch.float32)
+model_name = f'name2gender-small.{int(time.time())}'
+model = Name2GenderSmall(dtype=torch.float32)
 
 # %% data process
 train_set = preprocess(train_dataset, batched=True)
